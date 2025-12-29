@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nesting Pro v9.1 - Platinum Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+/* --- TECH MINIMAL / ELEGANT THEME (vGold) --- */
+:root{
+  --bg:#f6f7f9;
+  --surface:#ffffff;
+  --surface-2:#f2f4f7;
+  --text:#0f172a;
+  --muted:#475569;
+  --muted-2:#64748b;
+  --border:#e2e8f0;
+
+  --accent:#2563eb;
+  --accent-2:#1d4ed8;
+
+  --good:#16a34a;
+  --warn:#d97706;
+  --bad:#ef4444;
+
+  --radius:12px;
+  --radius-sm:10px;
+  --shadow: 0 1px 2px rgba(2,6,23,.06), 0 14px 36px rgba(2,6,23,.07);
+  --shadow-sm: 0 1px 2px rgba(2,6,23,.08);
+
+  --font:'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ color-scheme: light; }
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  padding-bottom:60px;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* Navbar */
+.navbar{
+  background:rgba(255,255,255,.86);
+  backdrop-filter:saturate(1.4) blur(10px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.brand{
+  font-size:1.05rem;
+  font-weight:700;
+  letter-spacing:-0.01em;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.brand .mark{
+  width:10px; height:10px; border-radius:3px;
+  background:linear-gradient(180deg, var(--accent), var(--accent-2));
+  box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+.version-tag{
+  font-family:var(--mono);
+  background:rgba(37,99,235,.10);
+  color:var(--accent-2);
+  border:1px solid rgba(37,99,235,.22);
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:0.75rem;
+  font-weight:700;
+}
+
+.nav-btn{
+  background:transparent;
+  border:1px solid transparent;
+  color:var(--muted-2);
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+  margin-left:8px;
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.nav-btn:hover{
+  background:rgba(2,6,23,.04);
+  color:var(--text);
+}
+.nav-btn.active{
+  background:rgba(37,99,235,.10);
+  border-color:rgba(37,99,235,.22);
+  color:var(--accent-2);
+}
+
+/* Layout */
+.page{ display:none; padding:24px; max-width:1600px; margin:0 auto; }
+.page.active{ display:block; }
+.workspace-grid{ display:grid; grid-template-columns: 420px 1fr; gap:24px; }
+
+/* Components */
+.card{
+  background:var(--surface);
+  border-radius:var(--radius);
+  padding:20px;
+  border:1px solid var(--border);
+  margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.card h2{
+  font-size:0.78rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--muted-2);
+  padding-bottom:10px;
+  margin-bottom:16px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.card h2::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-1px;
+  width:52px;
+  height:2px;
+  background:linear-gradient(90deg, var(--accent), transparent);
+}
+
+/* Forms */
+.row{ display:flex; gap:12px; margin-bottom:12px; }
+.col{ flex:1; }
+label{
+  display:block;
+  font-size:0.74rem;
+  font-weight:700;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+input, select{
+  width:100%;
+  padding:10px 10px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  font-size:0.92rem;
+  font-family:var(--font);
+  background:var(--surface);
+  color:var(--text);
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+input::placeholder{ color:#94a3b8; }
+input:focus, select:focus{
+  outline:none;
+  border-color:rgba(37,99,235,.55);
+  box-shadow:0 0 0 4px rgba(37,99,235,.14);
+}
+input[type="text"]#pName{
+  border-radius:10px;
+}
+
+/* Buttons */
+.btn{
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid transparent;
+  cursor:pointer;
+  font-weight:700;
+  font-size:0.92rem;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:transform .05s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+  user-select:none;
+}
+.btn:active{ transform:translateY(1px); }
+.btn-primary{
+  background:linear-gradient(180deg, var(--accent), var(--accent-2));
+  color:#fff;
+  width:100%;
+  justify-content:center;
+  box-shadow:0 10px 24px rgba(37,99,235,.18);
+}
+.btn-primary:hover{ filter:saturate(1.06); }
+.btn-sec{
+  background:var(--surface);
+  color:var(--text);
+  border-color:var(--border);
+}
+.btn-sec:hover{ background:rgba(2,6,23,.02); border-color:#d7dee8; }
+.btn-warn{
+  background:rgba(217,119,6,.12);
+  color:#7c2d12;
+  border-color:rgba(217,119,6,.20);
+  width:100%;
+  justify-content:center;
+}
+.icon-btn{
+  background:none;
+  border:1px solid transparent;
+  cursor:pointer;
+  font-size:1rem;
+  padding:6px;
+  opacity:.72;
+  border-radius:10px;
+  transition:opacity .15s ease, background .15s ease, transform .05s ease;
+}
+.icon-btn:hover{ opacity:1; background:rgba(2,6,23,.04); }
+.icon-btn:active{ transform:translateY(1px); }
+
+/* Tables & Results */
+.table-container{ border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-top:10px; }
+.scroll-table{ max-height:220px; overflow-y:auto; }
+table{ width:100%; border-collapse:collapse; font-size:0.86rem; }
+th{
+  background:var(--surface-2);
+  padding:10px;
+  text-align:left;
+  font-weight:800;
+  color:var(--muted-2);
+  font-size:0.72rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+}
+td{ padding:9px 10px; border-bottom:1px solid rgba(226,232,240,.55); }
+
+.stats-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap:16px; margin-bottom:24px; }
+.stat-card{
+  background:var(--surface);
+  padding:16px;
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  text-align:left;
+  box-shadow:var(--shadow-sm);
+}
+.stat-label{ font-size:.78rem; font-weight:800; color:var(--muted-2); letter-spacing:.08em; text-transform:uppercase; }
+.stat-value{ font-size:1.55rem; font-weight:800; color:var(--text); margin-top:6px; }
+
+.sheet-container{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin-bottom:32px;
+  overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.sheet-header{
+  padding:12px 20px;
+  background:var(--surface-2);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:700;
+}
+.sheet-body{ display:grid; grid-template-columns: 2fr 1fr; }
+.canvas-wrap{
+  padding:24px;
+  background:var(--surface);
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  border-right:1px solid var(--border);
+}
+.info-wrap{ padding:0; max-height:500px; overflow-y:auto; background:#fafbfc; }
+.section-header{
+  padding:10px 16px;
+  background:#f1f5f9;
+  border-bottom:1px solid rgba(226,232,240,.8);
+  font-size:.75rem;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted-2);
+}
+.info-row{ padding:9px 16px; display:flex; justify-content:space-between; font-size:0.88rem; border-bottom:1px solid rgba(226,232,240,.55); }
+.legend{ display:flex; gap:16px; margin-bottom:10px; font-size:0.82rem; align-items:center; flex-wrap:wrap; color:var(--muted); }
+.legend .hl-toggle{ margin-left:auto; display:flex; align-items:center; gap:8px; }
+.legend .hl-toggle input{ transform: translateY(1px); }
+.group-legend{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 12px; }
+.group-chip{ display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid rgba(226,232,240,.9); border-radius:999px; background:#fff; font-size:0.78rem; color:var(--text); }
+.group-chip .sw{ width:10px; height:10px; border-radius:3px; }
+.group-chip code{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:0.74rem; color:var(--muted); }
+.dot{ width:10px; height:10px; display:inline-block; border-radius:3px; margin-right:6px; }
+
+/* Loading */
+#loading{
+  position:fixed; inset:0;
+  background:rgba(246,247,249,.85);
+  backdrop-filter: blur(6px);
+  z-index:500;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+}
+.spinner{
+  width:42px; height:42px;
+  border:3px solid rgba(148,163,184,.35);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* Empty-state (visualizer) */
+#visualizer > div{
+  border-radius:var(--radius);
+}
+
+/* Responsive */
+@media (max-width: 1100px){
+  .workspace-grid{ grid-template-columns: 1fr; }
+  .sheet-body{ grid-template-columns: 1fr; }
+  .canvas-wrap{ border-right:none; border-bottom:1px solid var(--border); }
+}
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; animation:none !important; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="brand"><span class="mark" aria-hidden="true"></span> Nesting Pro <span class="version-tag">v9.1</span></div>
+        <div>
+            <button class="nav-btn active" onclick="go('dashboard')">Progetti</button>
+            <button class="nav-btn" onclick="go('workspace')">Workspace</button>
+        </div>
+    </nav>
+
+    <div id="loading"><div class="spinner"></div><p style="margin-top:10px; font-weight:600; color:#4f46e5">Elaborazione...</p></div>
+
+    <div id="dashboard" class="page active">
+        <div style="display:flex; justify-content:space-between; margin-bottom:24px;">
+            <h1>I Miei Progetti</h1>
+            <button class="btn btn-primary" style="width:auto" onclick="newProject()">+ Nuovo Progetto</button>
+        </div>
+        <div id="projList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px;"></div>
+    </div>
+
+    <div id="workspace" class="page">
+        <div class="card" style="padding: 12px 20px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <input type="text" id="pName" value="Nuovo Progetto" style="font-weight:600; font-size:1.1rem; border:none; border-bottom:1px solid #ddd; width:200px;">
+            <div style="flex:1"></div>
+            
+            <button class="btn btn-sec" onclick="exportPDF()">📄 PDF</button>
+            <button class="btn btn-sec" onclick="exportExcel()">📊 Excel</button>
+            <span style="border-right:1px solid #ddd; height:20px; margin:0 5px;"></span>
+            
+            <input type="file" id="fileIn" hidden onchange="importXLS(this)">
+            <button class="btn btn-sec" onclick="document.getElementById('fileIn').click()">📥 Importa</button>
+            <button class="btn btn-sec" onclick="save()">💾 Salva</button>
+            <button class="btn btn-sec" id="cloudLoginBtn" onclick="cloudLoginPrompt()">☁️ Accedi</button>
+            <button class="btn btn-sec" id="cloudSyncBtn" onclick="cloudSync()" style="display:none;">🔄 Sync</button>
+            <button class="btn btn-sec" id="cloudLogoutBtn" onclick="cloudLogout()" style="display:none;">🚪 Esci</button>
+            <span id="cloudStatus" style="font-size:12px; color:#64748b; margin-left:6px;">Cloud: off</span>
+            <button class="btn btn-primary" style="width:auto; padding:8px 32px;" onclick="calc()">⚡ CALCOLA</button>
+        </div>
+
+        <div class="workspace-grid">
+            <div>
+                <div class="card">
+                    <h2>1. Pannelli</h2>
+                    <div class="row"><div class="col"><label>Lun</label><input type="number" id="pL"></div><div class="col"><label>Lar</label><input type="number" id="pW"></div></div>
+                    <div class="row">
+                        <div class="col"><label>Qtà</label><input type="number" id="pQ" value="1"></div>
+                        <div class="col"><label>Vena</label><select id="pG"><option value="any">🔄 Libero</option><option value="v">↕️ Lungo</option><option value="h">↔️ Traverso</option></select></div>
+                    </div>
+                    <div class="row"><div class="col"><label>Label</label><input type="text" id="pLbl"></div><div class="col"><label>Materiale</label><div style="display:flex; gap:8px; align-items:center;"><select id="pMat" onchange="onMatInput()" style="flex:1"></select><button class="icon-btn" type="button" title="Nuovo materiale" onclick="addMaterial()">＋</button></div></div></div>
+                    
+                    <div class="row"><div class="col"><label>Foglio di stock</label><select id="pStockSel" onchange="onStockSel()"></select></div></div>
+<button class="btn btn-primary" id="addPBtn" onclick="addP()">+ Aggiungi</button>
+                    <div class="row" id="editPBtns" style="display:none; margin-top:10px;"><button class="btn btn-warn" onclick="updP()">Salva</button><button class="btn btn-sec" onclick="cancelP()">Annulla</button></div>
+                    <div class="table-container"><div class="scroll-table"><table id="tPanels"><tbody></tbody></table></div></div>
+                </div>
+
+                <div class="card">
+                    <h2>2. Magazzino</h2>
+                    <div class="row"><div class="col"><label>Lun</label><input type="number" id="sL" value="2500"></div><div class="col"><label>Lar</label><input type="number" id="sW" value="1250"></div><div class="col"><label>Qtà</label><input type="number" id="sQ" value="50"></div></div>
+                    <div class="row"><div class="col"><label>Materiale</label><input type="text" id="sMat" value="Default"></div></div>
+                    <div class="row" style="background:#f3f4f6; padding:10px; border-radius:6px;">
+                        <div class="col"><label>Costo (€)</label><input type="number" id="sCost" value="0"></div>
+                        <div class="col"><label>Unità</label><select id="sUnit"><option value="sheet">€/Foglio</option><option value="mq">€/m²</option></select></div>
+                    </div>
+                    <button class="btn btn-primary" id="addSBtn" onclick="addS()">+ Aggiungi</button>
+                    <div class="row" id="editSBtns" style="display:none; margin-top:10px;"><button class="btn btn-warn" onclick="updS()">Salva</button><button class="btn btn-sec" onclick="cancelS()">Annulla</button></div>
+                    <div class="table-container"><div class="scroll-table"><table id="tStock"><tbody></tbody></table></div></div>
+                </div>
+
+                <div class="card">
+                    <h2>3. Parametri</h2>
+                    <div class="row"><div class="col"><label>Lama (mm)</label><input type="number" id="blade" value="3"></div><div class="col"><label>Margine (mm)</label><input type="number" id="margin" value="10"></div></div>
+                    <div class="row"><div class="col"><label>Costo Taglio (€)</label><input type="number" id="cutPrice" value="1.00"></div></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-label">Materiale</div><div class="stat-value" id="rMatCost">€ 0</div></div>
+                    <div class="stat-card"><div class="stat-label">Tagli</div><div class="stat-value" id="rCutCost" style="color:#d97706">€ 0</div></div>
+                    <div class="stat-card"><div class="stat-label">Totale</div><div class="stat-value" id="rTotCost" style="color:#4f46e5">€ 0</div></div>
+                    <div class="stat-card"><div class="stat-label">Eff.</div><div class="stat-value" id="rEff" style="color:#059669">0%</div></div>
+                </div>
+                <div id="visualizer">
+                    <div style="text-align:center; padding:80px; color:#9ca3af; border:2px dashed #e5e7eb; border-radius:8px;">Premi <b>CALCOLA</b></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- APP DATA ---
+    let projects = JSON.parse(localStorage.getItem('np_v91') || '[]');
+
+// --- CLOUD SYNC (Supabase) ---
+// 1) Crea un progetto Supabase (free)
+// 2) Inserisci qui URL e ANON KEY (Project Settings → API)
+//    NB: l'anon key è pensata per stare nel client; la sicurezza la fa la RLS.
+const SB_URL  = "";   // es. https://xxxx.supabase.co
+const SB_ANON = "";   // es. eyJhbGciOi...
+
+let sb = null;
+let sbUser = null;
+
+function _cloudReady() {
+    return (SB_URL && SB_ANON && window.supabase && typeof window.supabase.createClient === 'function');
+}
+
+async function cloudInit() {
+    if(!_cloudReady()) { updateCloudUI(); return; }
+    try{
+        sb = window.supabase.createClient(SB_URL, SB_ANON, {
+            auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
+        });
+        const { data } = await sb.auth.getSession();
+        sbUser = data?.session?.user || null;
+        sb.auth.onAuthStateChange((_event, session) => {
+            sbUser = session?.user || null;
+            updateCloudUI();
+        });
+    } catch(e) {
+        console.warn('Supabase init error', e);
+    }
+    updateCloudUI();
+}
+
+function updateCloudUI() {
+    const loginBtn  = document.getElementById('cloudLoginBtn');
+    const syncBtn   = document.getElementById('cloudSyncBtn');
+    const logoutBtn = document.getElementById('cloudLogoutBtn');
+    const status    = document.getElementById('cloudStatus');
+    if(!loginBtn || !syncBtn || !logoutBtn || !status) return;
+
+    if(!_cloudReady()) {
+        loginBtn.style.display = 'inline-flex';
+        syncBtn.style.display = 'none';
+        logoutBtn.style.display = 'none';
+        status.textContent = 'Cloud: config mancante';
+        return;
+    }
+    if(sbUser) {
+        loginBtn.style.display = 'none';
+        syncBtn.style.display = 'inline-flex';
+        logoutBtn.style.display = 'inline-flex';
+        status.textContent = 'Cloud: ' + (sbUser.email || 'attivo');
+    } else {
+        loginBtn.style.display = 'inline-flex';
+        syncBtn.style.display = 'none';
+        logoutBtn.style.display = 'none';
+        status.textContent = 'Cloud: non connesso';
+    }
+}
+
+async function cloudLoginPrompt(){
+    if(!_cloudReady()) {
+        alert("Cloud non configurato. Compila SB_URL e SB_ANON nel codice (sezione CLOUD SYNC).");
+        return;
+    }
+    const email = prompt("Inserisci la tua email (ti arriva un magic link):");
+    if(!email) return;
+    const redirect = window.location.href.split('#')[0];
+    const { error } = await sb.auth.signInWithOtp({ email, options:{ emailRedirectTo: redirect }});
+    if(error) alert("Errore login: " + error.message);
+    else alert("Ti ho inviato un link via email. Aprilo su questo dispositivo per completare l’accesso.");
+}
+
+async function cloudLogout(){
+    if(!sb) return;
+    await sb.auth.signOut();
+}
+
+async function cloudSync(){
+    if(!sbUser) { alert("Prima accedi al Cloud."); return; }
+    await cloudPushAll();
+    await cloudPullMerge();
+    alert("Sincronizzazione completata.");
+}
+
+async function cloudPushAll(){
+    if(!sbUser) return;
+    for(const pr of projects) {
+        await cloudUpsert(pr);
+    }
+}
+
+async function cloudUpsert(pr){
+    if(!sbUser) return;
+    const payload = {
+        id: String(pr.id),
+        user_id: sbUser.id,
+        name: pr.name || '',
+        data: pr,
+        updated_at: new Date(pr.date || Date.now()).toISOString()
+    };
+    const { error } = await sb.from('projects').upsert(payload, { onConflict: 'id,user_id' });
+    if(error) console.warn('Cloud upsert error', error);
+}
+
+async function cloudPullMerge(){
+    if(!sbUser) return;
+    const { data, error } = await sb
+        .from('projects')
+        .select('id, user_id, name, data, updated_at')
+        .eq('user_id', sbUser.id);
+
+    if(error) { console.warn('Cloud fetch error', error); return; }
+
+    let changed = false;
+    for(const row of (data || [])) {
+        const remote = row.data;
+        if(!remote) continue;
+        const rid = String(remote.id ?? row.id);
+        const localIdx = projects.findIndex(x => String(x.id) === rid);
+        const rDate = Number(remote.date || Date.parse(row.updated_at) || 0);
+        if(localIdx < 0) {
+            projects.push(remote);
+            changed = true;
+        } else {
+            const lDate = Number(projects[localIdx].date || 0);
+            if(rDate > lDate) {
+                projects[localIdx] = remote;
+                changed = true;
+            }
+        }
+    }
+    if(changed) {
+        localStorage.setItem('np_v91', JSON.stringify(projects));
+        // sync to cloud (best effort, non-blocking)
+        if(typeof cloudUpsert==='function' && sbUser){ setTimeout(()=>cloudUpsert(curP), 10); }
+        // se il progetto corrente è stato aggiornato dal cloud, riallinea
+        if(curP) {
+            const idx = projects.findIndex(x=>String(x.id)===String(curP.id));
+            if(idx>=0) curP = projects[idx];
+        }
+        try{ renderDash(); } catch(_e){}
+    }
+}
+
+    let curP = null;
+    let editP_id = -1, editS_id = -1;
+    let lastResults = []; // Store calculation results for Export
+
+    // --- CORE LOGIC ---
+    function go(page) {
+        document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
+        document.getElementById(page).classList.add('active');
+        document.querySelector(`button[onclick="go('${page}')"]`).classList.add('active');
+        if(page==='dashboard') renderDash();
+    }
+
+    function renderDash() {
+        const d = document.getElementById('projList');
+        if(!projects.length) { d.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#9ca3af">Nessun progetto.</p>'; return; }
+        d.innerHTML = projects.map((p,i)=>`
+            <div class="card" style="margin:0; cursor:pointer; position:relative;" onclick="loadP(${i})">
+                <button onclick="delP(event,${i})" style="position:absolute; top:15px; right:15px; border:none; background:none; color:#ef4444; font-weight:bold; cursor:pointer">×</button>
+                <div style="font-weight:700; color:#111827;">${p.name}</div>
+                <div style="font-size:0.8rem; color:#6b7280; margin-bottom:10px">${new Date(p.date).toLocaleDateString()}</div>
+                <div style="font-size:0.8rem; background:#f3f4f6; padding:5px; border-radius:4px">${p.panels.length} Pannelli</div>
+            </div>`).join('');
+    }
+    
+    function newProject() {
+        curP = { id:Date.now(), name:'Nuovo Progetto', date:Date.now(), panels:[], stocks:[{l:2500,w:1250,q:50,mat:'Default',cost:0,unit:'sheet'}], materials:['Default'], conf:{blade:3, margin:10, cutPrice:1.0} };
+        lastResults = []; save(); loadUI(); go('workspace');
+    }
+    function loadP(i) { curP=projects[i]; lastResults=[]; loadUI(); go('workspace'); }
+    function delP(e,i) { e.stopPropagation(); if(confirm('Eliminare?')){projects.splice(i,1); save(true); renderDash();} }
+    function save(silent) {
+        if(!curP) return;
+        curP.name = document.getElementById('pName').value;
+        curP.conf = { blade: parseFloat(document.getElementById('blade').value), margin: parseFloat(document.getElementById('margin').value), cutPrice: parseFloat(document.getElementById('cutPrice').value) };
+        curP.date = Date.now();
+        const idx = projects.findIndex(x=>x.id===curP.id);
+        if(idx>=0) projects[idx]=curP; else projects.push(curP);
+        localStorage.setItem('np_v91', JSON.stringify(projects));
+        if(!silent) alert('Salvato!');
+    }
+
+    // --- UI HELPERS ---
+    const val = id => document.getElementById(id).value;
+    const num = id => parseFloat(document.getElementById(id).value)||0;
+    const set = (id,v) => document.getElementById(id).value=v;
+    const disp = (id,v) => document.getElementById(id).style.display=v;
+
+    // --- UI helpers for Materiali/Stock ---
+    let hlGroups = true;
+
+    function _uid(prefix='id') {
+        return prefix + '-' + Date.now().toString(36) + Math.random().toString(16).slice(2);
+    }
+    function ensureIds() {
+        if(!curP) return;
+        curP.stocks = (curP.stocks||[]).map(s => s.id ? s : ({...s, id:_uid('st')}));
+        curP.panels = (curP.panels||[]).map(p => (p.stockId===undefined ? ({...p, stockId:''}) : p));
+    }
+    
+    function getMaterials() {
+        if(!curP) return [];
+        const fromStocks = (curP.stocks||[])
+            .map(s => String(s.mat||'').trim())
+            .filter(Boolean);
+        const fromPanels = (curP.panels||[])
+            .map(p => String(p.mat||'').trim())
+            .filter(Boolean);
+        const fromExtras = (curP.materials||[])
+            .map(m => String(m||'').trim())
+            .filter(Boolean);
+
+        return [...new Set([...fromStocks, ...fromPanels, ...fromExtras])]
+            .sort((a,b)=>a.localeCompare(b));
+    }
+
+    function refreshMatSelect() {
+        const sel = document.getElementById('pMat');
+        if(!sel || !curP) return;
+
+        const current = String(sel.value||'').trim();
+        const mats = getMaterials();
+
+        sel.innerHTML = '';
+        if(!mats.length) {
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = '—';
+            sel.appendChild(opt);
+            sel.value = '';
+            return;
+        }
+
+        mats.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            sel.appendChild(opt);
+        });
+
+        if(current && mats.includes(current)) sel.value = current;
+        else sel.value = mats[0];
+    }
+
+    function refreshStockSel() {
+        const sel = document.getElementById('pStockSel');
+        if(!sel || !curP) return;
+
+        const current = sel.value;
+        let mat = String(val('pMat')||'').trim();
+
+        // if current material doesn't exist anymore, pick first available
+        if(!mat) {
+            refreshMatSelect();
+            mat = String(val('pMat')||'').trim();
+        }
+
+        const stocksForMat = (curP.stocks||[]).filter(s => String(s.mat||'').trim() === mat);
+
+        sel.innerHTML = '';
+        if(!mat) { sel.innerHTML = '<option value="">—</option>'; return; }
+        if(!stocksForMat.length) { sel.innerHTML = '<option value="">(nessun foglio per questo materiale)</option>'; return; }
+
+        stocksForMat.forEach(s => {
+            const cost = (s.unit==='mq') ? `€${s.cost}/m²` : `€${s.cost}/foglio`;
+            const opt = document.createElement('option');
+            opt.value = s.id;
+            opt.textContent = `${s.l}×${s.w} — ${cost} (q.tà ${s.q||0})`;
+            sel.appendChild(opt);
+        });
+
+        if(current && stocksForMat.some(s=>s.id===current)) sel.value = current;
+        else sel.value = stocksForMat[0].id;
+    }
+
+    function onMatInput() {
+        refreshStockSel();
+    }
+
+    function onStockSel() {
+        const sel = document.getElementById('pStockSel');
+        if(!sel || !curP) return;
+        const st = (curP.stocks||[]).find(s => s.id===sel.value);
+        if(st && String(val('pMat')||'').trim() !== String(st.mat||'').trim()){
+            set('pMat', String(st.mat||'').trim());
+            refreshMatSelect();
+            refreshStockSel();
+            set('pStockSel', st.id);
+        }
+    }
+
+    function addMaterial() {
+        if(!curP) return;
+        const name = prompt('Nome materiale (es. Betulla, MDF, Okumé):', '');
+        if(!name) return;
+        const m = String(name).trim();
+        if(!m) return;
+
+        curP.materials = curP.materials || [];
+        if(!curP.materials.some(x => String(x||'').trim() === m)) curP.materials.push(m);
+
+        set('pMat', m);
+        refreshMatSelect();
+        refreshStockSel();
+        save(true);
+    }
+
+
+
+    
+    // Disegna etichette dentro i pezzi adattandole allo spazio (max 3 righe, ellissi)
+    function drawFittedLabel(ctx, text, x, y, w, h) {
+        const pad = 6;
+        const maxW = w - pad*2, maxH = h - pad*2;
+        if(maxW < 24 || maxH < 14) return;
+        const words = String(text||'').trim().split(/\s+/).filter(Boolean);
+        if(!words.length) return;
+
+        const maxLines = (maxH > 44 ? 3 : 2);
+        let startFs = Math.min(22, Math.max(9, Math.min(maxH/2.6, maxW/6)));
+
+        function wrap(fs) {
+            ctx.font = `600 ${fs}px Inter, system-ui`;
+            let lines = [], line = '';
+            let used = 0;
+            for(let i=0;i<words.length;i++){
+                const test = line ? (line + ' ' + words[i]) : words[i];
+                if(ctx.measureText(test).width <= maxW){
+                    line = test; used = i+1;
+                } else {
+                    if(line) lines.push(line);
+                    line = words[i]; used = i+1;
+                    if(lines.length >= maxLines) break;
+                }
+            }
+            if(line && lines.length < maxLines) lines.push(line);
+
+            // ellissi se non ci stanno tutte le parole
+            const truncated = (used < words.length);
+            if(truncated && lines.length){
+                let li = lines.length-1;
+                let last = lines[li];
+                while(last && ctx.measureText(last+'…').width > maxW) last = last.slice(0,-1);
+                lines[li] = (last||'') + '…';
+            }
+            const lineH = fs * 1.15;
+            const totalH = lines.length * lineH;
+            return {lines, lineH, totalH};
+        }
+
+        for(let fs = Math.floor(startFs); fs >= 9; fs--){
+            const r = wrap(fs);
+            if(r.totalH <= maxH + 1){
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const startY = y + h/2 - (r.totalH - r.lineH)/2;
+                for(let i=0;i<r.lines.length;i++){
+                    ctx.fillText(r.lines[i], x + w/2, startY + i*r.lineH);
+                }
+                return;
+            }
+        }
+    }
+
+function loadUI() {
+        set('pName', curP.name); set('blade', curP.conf.blade); set('margin', curP.conf.margin); set('cutPrice', curP.conf.cutPrice||1);
+        ensureIds(); renP(); renS(); refreshMatSelect(); refreshStockSel();
+        document.getElementById('visualizer').innerHTML = '<div style="text-align:center; padding:80px; color:#9ca3af; border:2px dashed #e5e7eb; border-radius:8px;">Premi <b>CALCOLA</b></div>';
+        ['rMatCost','rCutCost','rTotCost','rEff'].forEach(id=>document.getElementById(id).innerText='-');
+    }
+
+    // --- CRUD ---
+    function renP() { document.querySelector('#tPanels tbody').innerHTML = curP.panels.map((p,i)=>`<tr style="${i===editP_id?'background:#fff7ed':''}"><td>${p.lbl}</td><td>${p.l}x${p.w} (${p.q})</td><td>${p.mat}</td><td>${p.grain==='v'?'↕️':(p.grain==='h'?'↔️':'🔄')}</td><td style="text-align:right"><button class="icon-btn" onclick="edP(${i})">✏️</button><button class="icon-btn" onclick="rmP(${i})">🗑️</button></td></tr>`).join(''); }
+    function addP() { const p={l:num('pL'), w:num('pW'), q:num('pQ'), lbl:val('pLbl')||'P'+(curP.panels.length+1), mat:val('pMat'), stockId:val('pStockSel')||'', grain:val('pG')}; if(p.l&&p.w){curP.panels.push(p); save(true); renP();} }
+    function edP(i) { editP_id=i; const p=curP.panels[i]; set('pL',p.l); set('pW',p.w); set('pQ',p.q); set('pLbl',p.lbl); set('pMat',p.mat); refreshMatSelect(); refreshStockSel(); set('pStockSel',p.stockId||''); set('pG',p.grain); disp('addPBtn','none'); disp('editPBtns','flex'); renP(); }
+    function updP() { if(editP_id<0)return; curP.panels[editP_id]={l:num('pL'), w:num('pW'), q:num('pQ'), lbl:val('pLbl'), mat:val('pMat'), stockId:val('pStockSel')||'', grain:val('pG')}; cancelP(); save(true); }
+    function cancelP() { editP_id=-1; disp('addPBtn','block'); disp('editPBtns','none'); renP(); }
+    function rmP(i) { curP.panels.splice(i,1); save(true); renP(); }
+
+    function renS() { document.querySelector('#tStock tbody').innerHTML = curP.stocks.map((s,i)=>`<tr style="${i===editS_id?'background:#fff7ed':''}"><td>${s.mat}</td><td>${s.l}x${s.w}</td><td>${s.q}</td><td>${s.cost>0 ? '€'+s.cost+(s.unit==='mq'?'/m²':'/pz') : '-'}</td><td style="text-align:right"><button class="icon-btn" onclick="edS(${i})">✏️</button><button class="icon-btn" onclick="rmS(${i})">🗑️</button></td></tr>`).join('');
+        refreshMatSelect(); refreshStockSel();
+    }
+    function addS() { const s={id:_uid('st'), l:num('sL'), w:num('sW'), q:num('sQ'), mat:val('sMat'), cost:num('sCost'), unit:val('sUnit')}; if(s.l&&s.w){curP.stocks.push(s); save(true); renS();} }
+    function edS(i) { editS_id=i; const s=curP.stocks[i]; set('sL',s.l); set('sW',s.w); set('sQ',s.q); set('sMat',s.mat); set('sCost',s.cost); set('sUnit',s.unit); disp('addSBtn','none'); disp('editSBtns','flex'); renS(); }
+    function updS() { if(editS_id<0)return; curP.stocks[editS_id]={l:num('sL'), w:num('sW'), q:num('sQ'), mat:val('sMat'), cost:num('sCost'), unit:val('sUnit')}; cancelS(); save(true); }
+    function cancelS() { editS_id=-1; disp('addSBtn','block'); disp('editSBtns','none'); renS(); }
+    function rmS(i) { curP.stocks.splice(i,1); save(true); renS(); }
+
+    // --- ALGORITHM & CALC ---
+    class Rect { constructor(x,y,w,h){this.x=x;this.y=y;this.w=w;this.h=h} }
+    class Bin {
+        constructor(w,h,blade) { this.w=w;this.h=h;this.b=blade; this.free=[new Rect(0,0,w,h)]; this.used=[]; }
+        place(it) {
+            let best = {s1:Infinity, s2:Infinity, r:null, rot:false};
+            for(let r of this.free) {
+                if(it.grain!=='h' && r.w>=it.l && r.h>=it.w) {
+                    let s1=Math.min(r.w-it.l, r.h-it.w), s2=Math.max(r.w-it.l, r.h-it.w);
+                    if(s1<best.s1 || (s1==best.s1 && s2<best.s2)) best={s1,s2,r,rot:false};
+                }
+                if(it.grain!=='v' && r.w>=it.w && r.h>=it.l) {
+                    let s1=Math.min(r.w-it.w, r.h-it.l), s2=Math.max(r.w-it.w, r.h-it.l);
+                    if(s1<best.s1 || (s1==best.s1 && s2<best.s2)) best={s1,s2,r,rot:true};
+                }
+            }
+            if(best.r) {
+                let w=best.rot?it.w:it.l, h=best.rot?it.l:it.w;
+                let u=new Rect(best.r.x, best.r.y, w, h);
+                this.used.push({x:u.x, y:u.y, w:u.w, h:u.h, lbl:it.lbl, rot:best.rot});
+                this.split(u); return true;
+            }
+            return false;
+        }
+        split(u) {
+            let n=[], fx=u.x, fy=u.y, fw=u.w+this.b, fh=u.h+this.b;
+            for(let f of this.free) {
+                if(uxIntersects(f, {x:fx, y:fy, w:fw, h:fh})) {
+                    if(fx<f.x+f.w && fx+fw>f.x) {
+                        if(fy>f.y && fy<f.y+f.h) n.push(new Rect(f.x, f.y, f.w, fy-f.y));
+                        if(fy+fh<f.y+f.h) n.push(new Rect(f.x, fy+fh, f.w, f.y+f.h-(fy+fh)));
+                    }
+                    if(fy<f.y+f.h && fy+fh>f.y) {
+                        if(fx>f.x && fx<f.x+f.w) n.push(new Rect(f.x, f.y, fx-f.x, f.h));
+                        if(fx+fw<f.x+f.w) n.push(new Rect(fx+fw, f.y, f.x+f.w-(fx+fw), f.h));
+                    }
+                } else n.push(f);
+            }
+            this.free = n.filter((r,i)=>!n.some((o,j)=>i!==j && contains(o,r)));
+        }
+    }
+    const uxIntersects = (a,b) => !(b.x>=a.x+a.w || b.x+b.w<=a.x || b.y>=a.y+a.h || b.y+b.h<=a.y);
+    const contains = (a,b) => b.x>=a.x && b.y>=a.y && b.x+b.w<=a.x+a.w && b.y+b.h<=a.y+a.h;
+
+    function calc() {
+        if(!curP.panels.length) return alert('Nessun pannello!');
+        save(true); disp('loading','flex');
+        
+        setTimeout(() => {
+            let Q=[]; 
+            curP.panels.forEach(p=>{
+                const mat = String(p.mat||'').trim();
+                const defSt = (curP.stocks||[]).find(s=>String(s.mat||'').trim()===mat) || curP.stocks[0];
+                const sid = (p.stockId && String(p.stockId).trim()) || (defSt?defSt.id:'');
+                for(let i=0;i<p.q;i++) Q.push({...p, mat, stockId:sid});
+            });
+            Q.sort((a,b)=>(b.l*b.w)-(a.l*a.w));
+            
+            let sheets=[], keys=[...new Set(Q.map(p=>p.mat+'||'+(p.stockId||'')))];
+            keys.forEach(k => {
+                const parts = k.split('||'); const m = parts[0]; const sid = parts[1]||'';
+                let subQ = Q.filter(x=>x.mat===m && (x.stockId||'')===sid);
+                let stock = (curP.stocks||[]).find(s=>s.id===sid) || curP.stocks.find(s=>s.mat===m) || curP.stocks[0];
+                if(!stock) { alert('No stock for '+m); return; }
+                while(subQ.length>0) {
+                    let bin = new Bin(stock.l-curP.conf.margin*2, stock.w-curP.conf.margin*2, curP.conf.blade);
+                    let nextQ = [];
+                    subQ.forEach(item => { if(!bin.place(item)) nextQ.push(item); });
+                    if(nextQ.length === subQ.length) { alert('Pezzo troppo grande: '+subQ[0].lbl); break; }
+                    sheets.push({mat:m, st:stock, bin:bin});
+                    subQ = nextQ;
+                }
+            });
+            lastResults = sheets; // Store for export
+            renderRes(sheets);
+            disp('loading','none');
+        }, 100);
+    }
+
+    function renderRes(sheets) {
+        const c = document.getElementById('visualizer'); c.innerHTML = '';
+        if(!sheets.length) return;
+        
+        // Stats
+        let tMat=0, tCuts=0, tEff=0, tA=0, uA=0;
+        
+        // Legend
+        c.innerHTML = `<div class="legend">
+            <div><span class="dot" style="background:#22c55e"></span>Pannelli</div>
+            <div><span class="dot" style="background:#60a5fa"></span>Recupero (&gt;300mm)</div>
+            <div><span class="dot" style="background:#e5e7eb"></span>Scarto</div>
+            <label class="hl-toggle"><input id="hlGroups" type="checkbox" ${hlGroups?'checked':''} onchange="hlGroups=this.checked; renderRes(lastResults);"> Evidenzia uguali</label>
+        </div>
+        <div id="groupLegend" class="group-legend"></div>`;
+
+        
+        // Raggruppa pezzi uguali (dimensione+materiale) per evidenziarli nel layout
+        const _palette = ['#0ea5e9','#8b5cf6','#f97316','#14b8a6','#ef4444','#22c55e','#eab308','#ec4899','#64748b','#06b6d4','#a855f7','#fb7185'];
+        const _counts = new Map();
+        sheets.forEach(sh=>{
+            sh.bin.used.forEach(u=>{
+                const ow = u.rot ? u.h : u.w;
+                const oh = u.rot ? u.w : u.h;
+                const a = Math.min(Math.round(ow), Math.round(oh));
+                const b = Math.max(Math.round(ow), Math.round(oh));
+                const key = `${sh.mat}|${a}x${b}`;
+                _counts.set(key, (_counts.get(key)||0)+1);
+            });
+        });
+        const _rep = [..._counts.entries()].filter(([,c])=>c>1).sort((a,b)=>b[1]-a[1]);
+        const groupMap = new Map();
+        _rep.forEach(([key,count],i)=>{
+            const color = _palette[i % _palette.length];
+            const tag = String.fromCharCode(65 + (i % 26)) + (i>=26 ? Math.floor(i/26) : '');
+            const parts = key.split('|');
+            const mat = parts[0]; const dims = parts[1];
+            groupMap.set(key, {color, tag, mat, dims, count});
+        });
+        const gl = document.getElementById('groupLegend');
+        if(gl){
+            if(hlGroups && groupMap.size){
+                gl.innerHTML = [...groupMap.values()].map(g=>`<span class="group-chip"><span class="sw" style="background:${g.color}"></span><b>${g.tag}</b> <code>${g.dims}</code> <span style="opacity:.7">${g.mat}</span> <span style="opacity:.7">×${g.count}</span></span>`).join('');
+            } else {
+                gl.innerHTML = '';
+            }
+        }
+
+sheets.forEach((sh, idx) => {
+            const sArea = sh.st.l*sh.st.w, uAreaSh = sh.bin.used.reduce((a,x)=>a+(x.w*x.h),0);
+            const eff = (uAreaSh/sArea)*100;
+            tA+=sArea; uA+=uAreaSh; tEff+=eff;
+            tMat += (sh.st.unit==='mq' ? (sArea/1000000)*sh.st.cost : sh.st.cost);
+            
+            const rec = sh.bin.free.filter(r=>r.w>=300 && r.h>=300);
+            rec.sort((a,b)=>(b.w*b.h)-(a.w*a.h));
+            const cuts = sh.bin.used.length + rec.length + 2;
+            tCuts += cuts;
+
+            const div = document.createElement('div'); div.className='sheet-container';
+            div.innerHTML = `
+                <div class="sheet-header"><div><b>Foglio ${idx+1}</b> (${sh.mat})</div><div>Eff: <b>${eff.toFixed(1)}%</b></div></div>
+                <div class="sheet-body">
+                    <div class="canvas-wrap"><canvas id="cvs-${idx}"></canvas></div>
+                    <div class="info-wrap">
+                        <div class="section-header">DETTAGLI</div>
+                        <div class="info-row"><span>Pezzi</span> <b>${sh.bin.used.length}</b></div>
+                        <div class="info-row"><span>Sfrido</span> <b style="color:#ef4444">${((sArea-uAreaSh)/1000000).toFixed(2)}m²</b></div>
+                        <div class="section-header" style="background:#eff6ff;color:#1d4ed8;margin-top:10px">RECUPERO</div>
+                        ${rec.length ? rec.map(r=>`<div class="info-row" style="color:#2563eb"><span>Pezzo</span><span>${Math.round(r.w)}x${Math.round(r.h)}</span></div>`).join('') : '<div class="info-row"><i>Nessuno</i></div>'}
+                    </div>
+                </div>`;
+            c.appendChild(div);
+
+            setTimeout(() => {
+                const cvs=document.getElementById(`cvs-${idx}`), ctx=cvs.getContext('2d');
+                const sc = Math.min(600/sh.st.l, 350/sh.st.w);
+                cvs.width=sh.st.l*sc; cvs.height=sh.st.w*sc;
+                
+                ctx.fillStyle='#f3f4f6'; ctx.fillRect(0,0,cvs.width,cvs.height);
+                ctx.strokeStyle='#d1d5db'; ctx.strokeRect(0,0,cvs.width,cvs.height);
+
+                rec.forEach(r=>{
+                    ctx.fillStyle='#dbeafe'; ctx.fillRect(r.x*sc, r.y*sc, r.w*sc, r.h*sc);
+                    ctx.strokeStyle='#93c5fd'; ctx.strokeRect(r.x*sc, r.y*sc, r.w*sc, r.h*sc);
+                });
+
+                sh.bin.used.forEach(u=>{
+                    const x=u.x*sc, y=u.y*sc, w=u.w*sc, h=u.h*sc;
+                    ctx.fillStyle='#86efac'; ctx.fillRect(x,y,w,h);
+                    ctx.strokeStyle='#16a34a'; ctx.strokeRect(x,y,w,h);
+                    ctx.fillStyle='#064e3b';
+                    drawFittedLabel(ctx, u.lbl, x, y, w, h);
+                    let fs=Math.max(10,Math.min(w,h)/3);
+
+                    // overlay: gruppi uguali (dimensione+materiale)
+                    if(hlGroups && groupMap && groupMap.size){
+                        const ow = u.rot ? u.h : u.w;
+                        const oh = u.rot ? u.w : u.h;
+                        const a = Math.min(Math.round(ow), Math.round(oh));
+                        const b = Math.max(Math.round(ow), Math.round(oh));
+                        const gKey = `${sh.mat}|${a}x${b}`;
+                        const g = groupMap.get(gKey);
+                        if(g){
+                            ctx.save();
+                            ctx.strokeStyle = g.color;
+                            ctx.lineWidth = Math.max(2, Math.min(w,h)/30);
+                            ctx.strokeRect(x+0.5, y+0.5, w-1, h-1);
+                            const bw=18, bh=14, bx=x+4, by=y+4;
+                            ctx.fillStyle = g.color;
+                            ctx.fillRect(bx, by, bw, bh);
+                            ctx.fillStyle = '#111827';
+                            ctx.font = `700 10px ui-monospace, SFMono-Regular, Menlo, monospace`;
+                            ctx.textAlign='center'; ctx.textBaseline='middle';
+                            ctx.fillText(g.tag, bx+bw/2, by+bh/2);
+                            ctx.restore();
+                        }
+                    }
+                    if(u.rot){ctx.font=`${fs*0.8}px Inter`; ctx.fillText('↻',x+w-fs,y+fs);}
+                });
+            },0);
+        });
+
+        const cCuts = tCuts * curP.conf.cutPrice;
+        document.getElementById('rMatCost').innerText = '€ '+tMat.toFixed(2);
+        document.getElementById('rCutCost').innerText = '€ '+cCuts.toFixed(2);
+        document.getElementById('rTotCost').innerText = '€ '+(tMat+cCuts).toFixed(2);
+        document.getElementById('rEff').innerText = (tEff/sheets.length).toFixed(1)+'%';
+    }
+
+    // --- EXPORT FUNCTIONS ---
+    async function exportPDF() {
+        if(!lastResults.length) return alert('Esegui prima il calcolo!');
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.text(`Progetto: ${curP.name}`, 10, 15);
+        doc.setFontSize(10);
+        doc.text(`Data: ${new Date().toLocaleDateString()}`, 10, 22);
+        
+        let y = 30;
+
+        // Riepilogo
+        const stats = [
+            ['Costo Materiale', document.getElementById('rMatCost').innerText],
+            ['Costo Tagli', document.getElementById('rCutCost').innerText],
+            ['Costo Totale', document.getElementById('rTotCost').innerText],
+            ['Efficienza Media', document.getElementById('rEff').innerText]
+        ];
+        doc.autoTable({
+            startY: y, head: [['Voce', 'Valore']], body: stats, theme: 'grid', headStyles: {fillColor: [79, 70, 229]}
+        });
+        y = doc.lastAutoTable.finalY + 10;
+
+        // Sheets
+        for(let i=0; i<lastResults.length; i++) {
+            const sh = lastResults[i];
+            
+            // Add New Page if needed
+            if(y > 250) { doc.addPage(); y = 15; }
+
+            doc.setFontSize(12);
+            doc.setTextColor(0,0,0);
+            doc.text(`Foglio ${i+1} (${sh.mat}) - ${sh.st.l}x${sh.st.w}mm`, 10, y);
+            y += 5;
+
+            // Image
+            const cvs = document.getElementById(`cvs-${i}`);
+            if(cvs) {
+                const imgData = cvs.toDataURL('image/png');
+                const imgW = 180;
+                const imgH = (cvs.height * imgW) / cvs.width;
+                doc.addImage(imgData, 'PNG', 15, y, imgW, imgH);
+                y += imgH + 10;
+            }
+
+            // Parts List
+            const body = sh.bin.used.map(u => [u.lbl, `${Math.round(u.w)} x ${Math.round(u.h)}`, u.rot?'Sì':'No']);
+            doc.autoTable({
+                startY: y, head: [['Etichetta', 'Dimensione', 'Ruotato']], body: body,
+                theme: 'striped', styles: {fontSize: 8}, headStyles: {fillColor: [100, 100, 100]}
+            });
+            y = doc.lastAutoTable.finalY + 15;
+        }
+
+        doc.save(`${curP.name.replace(/\s+/g, '_')}_CutList.pdf`);
+    }
+
+    function exportExcel() {
+        if(!lastResults.length) return alert('Esegui prima il calcolo!');
+        
+        const wb = XLSX.utils.book_new();
+
+        // 1. Riepilogo
+        const sumData = [
+            ['Nome Progetto', curP.name],
+            ['Data', new Date().toLocaleDateString()],
+            [],
+            ['COSTI', ''],
+            ['Materiale', document.getElementById('rMatCost').innerText],
+            ['Tagli', document.getElementById('rCutCost').innerText],
+            ['Totale', document.getElementById('rTotCost').innerText],
+            ['Efficienza', document.getElementById('rEff').innerText]
+        ];
+        const wsSum = XLSX.utils.aoa_to_sheet(sumData);
+        XLSX.utils.book_append_sheet(wb, wsSum, "Riepilogo");
+
+        // 2. Lista Tagli (Cut List for Machines)
+        let cutRows = [['Foglio', 'Materiale', 'Etichetta', 'Lunghezza', 'Larghezza', 'X', 'Y', 'Rotato']];
+        lastResults.forEach((sh, idx) => {
+            sh.bin.used.forEach(u => {
+                cutRows.push([
+                    idx+1, sh.mat, u.lbl, 
+                    Math.round(u.rot?u.h:u.w), Math.round(u.rot?u.w:u.h), // Original dims
+                    Math.round(u.x), Math.round(u.y), u.rot?'Si':'No'
+                ]);
+            });
+        });
+        const wsCuts = XLSX.utils.aoa_to_sheet(cutRows);
+        XLSX.utils.book_append_sheet(wb, wsCuts, "Lista Tagli");
+
+        // 3. Magazzino Utilizzato
+        let stockRows = [['Materiale', 'Dimensioni', 'Costo Unitario', 'Fogli Usati']];
+        // Simple aggregate count
+        const stockCounts = {};
+        lastResults.forEach(sh => {
+            const k = `${sh.mat} (${sh.st.l}x${sh.st.w})`;
+            stockCounts[k] = (stockCounts[k]||0) + 1;
+        });
+        Object.entries(stockCounts).forEach(([k,v]) => stockRows.push([k.split('(')[0], k.split('(')[1].replace(')',''), '', v]));
+        const wsStock = XLSX.utils.aoa_to_sheet(stockRows);
+        XLSX.utils.book_append_sheet(wb, wsStock, "Magazzino");
+
+        XLSX.writeFile(wb, `${curP.name.replace(/\s+/g, '_')}_Data.xlsx`);
+    }
+
+    // --- IMPORT XLS (Same as before but ensures functions exist) ---
+    function importXLS(input) {
+        const f=input.files[0]; if(!f)return;
+        const r=new FileReader();
+        r.onload=e=>{
+            const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+            let pCnt=0,sCnt=0;
+            // Scan logic from previous message...
+            const scan=(json,type)=>{
+                let cnt=0,head=-1,map={};
+                for(let i=0;i<Math.min(15,json.length);i++){
+                    const row=json[i].map(x=>String(x).toLowerCase());
+                    if(type==='P'&&row.some(x=>x.includes('lung')||x.includes('len'))&&row.some(x=>x.includes('lbl')||x.includes('eti')||x.includes('qt'))){
+                        head=i; row.forEach((c,k)=>{
+                            if(c.includes('lung')||c.includes('len'))map.l=k;
+                            if(c.includes('larg')||c.includes('wid'))map.w=k;
+                            if(c.includes('qt'))map.q=k;
+                            if(c.includes('eti')||c.includes('lbl'))map.lbl=k;
+                            if(c.includes('mat'))map.mat=k;
+                            if(c.includes('ven')||c.includes('gra'))map.g=k;
+                        }); break;
+                    }
+                    if(type==='S'&&row.some(x=>x.includes('lung')||x.includes('len'))&&(row.some(x=>x.includes('sto')||x.includes('qt'))||row[0].includes('mat'))){
+                        head=i; row.forEach((c,k)=>{
+                            if(c.includes('lung')||c.includes('len'))map.l=k;
+                            if(c.includes('larg')||c.includes('wid'))map.w=k;
+                            if(c.includes('qt'))map.q=k;
+                            if(c.includes('mat'))map.mat=k;
+                        }); break;
+                    }
+                }
+                if(head===-1)return 0;
+                for(let i=head+1;i<json.length;i++){
+                    const r=json[i]; if(!r[map.l])continue;
+                    if(type==='P'){
+                        let g='any',v=String(r[map.g]||'').toLowerCase(); if(v.includes('v')||v.includes('lun'))g='v';if(v.includes('h')||v.includes('tra'))g='h';
+                        curP.panels.push({l:parseFloat(r[map.l]),w:parseFloat(r[map.w]),q:map.q?parseInt(r[map.q]):1,lbl:map.lbl?r[map.lbl]:'I-'+i,mat:map.mat?r[map.mat]:'Def',grain:g});
+                    } else {
+                        curP.stocks.push({l:parseFloat(r[map.l]),w:parseFloat(r[map.w]),q:map.q?parseInt(r[map.q]):1,mat:map.mat?r[map.mat]:'Def',cost:0,unit:'sheet'});
+                    }
+                    cnt++;
+                }
+                return cnt;
+            };
+            wb.SheetNames.forEach(n=>{
+                const j=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1});
+                if(n.toLowerCase().includes('sto')||n.toLowerCase().includes('fog')) sCnt+=scan(j,'S');
+                else pCnt+=scan(j,'P'); 
+            });
+            save(true); loadUI(); alert(`Import: ${pCnt} Pannelli, ${sCnt} Stock`); input.value='';
+        };
+        r.readAsArrayBuffer(f);
+    }
+    
+    // Init
+    if(projects.length) loadP(0); else newProject();
+    
+    // init cloud (if configured)
+    cloudInit();
+</script>
+</body>
+</html>
